@@ -1,7 +1,21 @@
 services:
+  app:
+    build: .
+    container_name: tariff-api
+    environment:
+      DYNAMO_ENDPOINT: http://dynamodb-local:8000
+      AWS_ACCESS_KEY_ID: AKIAFAKEACCESSKEYID12
+      AWS_SECRET_ACCESS_KEY: FAKESECRETKEYFAKESECRETKEYFAKESECRETKEY12
+    ports:
+      - "8080:8080"         # host:container
+    depends_on:
+      - dynamodb-local
+
   dynamodb-local:
     image: amazon/dynamodb-local
     container_name: dynamodb-local
     ports:
       - "8000:8000"
-    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-inMemory"]
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb"]
+    volumes:
+      - ./dynamodb-data:/home/dynamodblocal/data

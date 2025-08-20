@@ -1,16 +1,15 @@
-package com.example
+package com.example.infrastructure.api
 
 import com.example.domain.model.FareRequest
 import com.example.domain.model.Journey
 import com.example.domain.service.FareCalculatorImpl
+import com.example.infrastructure.config.DatabaseConfig
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.request.*
-import io.ktor.server.plugins.statuspages.*
-import io.ktor.http.*
 import io.ktor.server.plugins.calllogging.*
 import kotlinx.serialization.json.Json
 
@@ -35,7 +34,7 @@ fun Application.configureRouting() {
     // Manejo de errores global
     install(io.ktor.server.plugins.statuspages.StatusPages) {
         exception<Throwable> { call, cause ->
-            cause.printStackTrace() // imprime el stacktrace completo en consola
+            cause.printStackTrace()
             call.respondText(
                 "Error: ${cause.message}",
                 status = io.ktor.http.HttpStatusCode.BadRequest
@@ -52,15 +51,19 @@ fun Application.configureRouting() {
             call.respond(mapOf("status" to "OK"))
         }
 
+        // Endpoint de calculo de tarifas con manejo de errores
         post("/fares/calculate") {
             try {
+                val fareRepository = DatabaseConfig.createFareRepository()
+                val fareCalc = FareCalculatorImpl(fareRepository)
+
                 val request = call.receive<FareRequest>()
-                val calculator = FareCalculatorImpl()
-                val result = calculator.calculateFare(
+                val result = fareCalc.calculateFare(
                     Journey(request.origin, request.destination),
                     request.passengerType,
                     request.age ?: 0
                 )
+
                 call.respond(result)
             } catch (e: Exception) {
                 e.printStackTrace()

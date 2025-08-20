@@ -12,16 +12,24 @@ application {
 }
 
 dependencies {
-    implementation(libs.ktor.server.core)
-    implementation(libs.ktor.server.netty)
-    implementation(libs.logback.classic)
-    implementation(libs.ktor.server.core)
-    implementation(libs.ktor.server.config.yaml)
-    testImplementation(libs.ktor.server.test.host)
-    testImplementation(libs.kotlin.test.junit)
-    implementation("io.ktor:ktor-serialization-kotlinx-json:3.0.0")
+    // --- Ktor 3.x (unifica versiones) ---
+    implementation("io.ktor:ktor-server-core:3.0.0")
+    implementation("io.ktor:ktor-server-netty:3.0.0")
     implementation("io.ktor:ktor-server-content-negotiation:3.0.0")
-    implementation("io.ktor:ktor-server-call-logging-jvm:2.3.4")
-    implementation("ch.qos.logback:logback-classic:1.4.8")
-    implementation("io.ktor:ktor-server-status-pages-jvm:2.3.4")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:3.0.0")
+    implementation("io.ktor:ktor-server-call-logging:3.0.0")
+    implementation("io.ktor:ktor-server-status-pages:3.0.0")
+    implementation("io.ktor:ktor-server-config-yaml:3.0.0")
+
+    // --- Logging ---
+    implementation("ch.qos.logback:logback-classic:1.4.14")
+
+    // --- AWS SDK v2 ---
+    implementation(platform("software.amazon.awssdk:bom:2.25.43"))
+    implementation("software.amazon.awssdk:dynamodb")
+    implementation("software.amazon.awssdk:url-connection-client")
+    // --- Tests ---
+    testImplementation("io.ktor:ktor-server-test-host:3.0.0")
+    testImplementation(kotlin("test"))
 }
+
